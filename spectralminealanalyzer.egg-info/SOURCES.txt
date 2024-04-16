@@ -1,0 +1,14 @@
+README.md
+setup.py
+data_acquisition/Sentinel.py
+misc/__init__.py
+misc/connections.py
+misc/dates.py
+misc/files.py
+misc/utils.py
+source/__init__.py
+source/sentinel_2_band_downloader.py
+spectralminealanalyzer.egg-info/PKG-INFO
+spectralminealanalyzer.egg-info/SOURCES.txt
+spectralminealanalyzer.egg-info/dependency_links.txt
+spectralminealanalyzer.egg-info/top_level.txt

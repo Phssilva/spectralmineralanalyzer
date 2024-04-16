@@ -1,7 +1,9 @@
-# Spectral Mineral Analyzer
 
 
-<img src="https://i.ibb.co/ssmGtV9/logo-jpg.jpg" alt="Verde">
+<div style="text-align: center;">
+<h1>Spectral Mineral Analyzer </h1>
+<img src="https://i.ibb.co/ssmGtV9/logo-jpg.jpg" alt="SpectralMineralAnalyzer" width="300" height="300">
+</div>
 
 <!-- <h2 align="center">Processing and gridding spatial data, machine-learning style</h2> -->
 
