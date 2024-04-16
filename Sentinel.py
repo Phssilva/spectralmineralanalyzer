@@ -2,13 +2,11 @@ import os
 import sys
 import geopandas as gpd
 
-#from source.sentinel_2_band_downloader import Sentinel2_Band_Downloader
+from source.sentinel_2_band_downloader import Sentinel2_Band_Downloader
 from sentinelsat import SentinelAPI
 from datetime import datetime, timedelta
 from config import settings
 from shapely.wkt import dumps
-
-
 
 
 class sentinel_Acquisition():
@@ -25,26 +23,42 @@ class sentinel_Acquisition():
 
         return return_list[0]
     
-    def download_sentinel_files(self, roi = 'database/ROI.shp', output_path = 'data/sentinel'):
+    def download_scl_files(self, roi = 'database/ROI.shp', output_path = 'data/sentinel'):
         # Download sentinel images
-        #downloader = Sentinel2_Band_Downloader(output_path)
+        downloader = Sentinel2_Band_Downloader(output_path)
         
-        api = SentinelAPI(settings.SENTINEL.user, settings.sec.copernicus.password, 'https://scihub.copernicus.eu/apihub')
-       
+        #api = SentinelAPI(settings.SENTINEL.user, settings.SENTINEL.password)
+        access_token, refresh_token, dt_access_token = downloader.connect_to_api(settings.SENTINEL.user,
+                                                                                settings.sec.copernicus.password)
+        
         polygon = self.read_file(roi)
         
-        start_date = datetime.utcnow() - timedelta(days=2)
+        start_date = datetime.utcnow() - timedelta(days=30)
         end_date = datetime.utcnow()
         cloud_cover = "100"
         type = "L2A"
         plataform_name = "SENTINEL-2"
         
-        products = api.query(polygon, date = (start_date, end_date), platformname = plataform_name, cloudcoverpercentage = (0, cloud_cover), producttype = type)
+        filter_list = downloader.construct_query(polygon, start_date, end_date, cloud_cover, type, plataform_name)
         
-        products_df = api.to_dataframe(products)
-
+        bands_dict = {"L1C":["B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08", "B8A", "B09", "B10", "B11", "B12", "TCI"],
+                "L2A":{"10m": ["AOT", "B02", "B03", "B04", "B08", "TCI", "WVP"],
+                "20m": ["AOT","B01", "B02", "B03", "B04", "B05","B06", "B07", "B8A", "B11", "B12", "SCL", "TCI", "WVP"],
+                "60m": ["AOT","B01", "B02", "B03", "B04", "B05","B06", "B07", "B8A", "B09","B11", "B12", "SCL", "TCI", "WVP"]}}
+        
+        #(self, access_token, params, bands_dict, 
+        #                        dt_access_token, refresh_token, tile)
+        product_info = downloader.download_sentinel2_bands(access_token, 
+                                                        filter_list, 
+                                                        bands_dict,dt_access_token,
+                                                        refresh_token, 
+                                                        None)
+        
+        return product_info
+        
+    
 
 sentinel = sentinel_Acquisition()
 
 file_list = sentinel.read_file('database/ROI.shp')
-product = sentinel.download_sentinel_files()
+product = sentinel.download_scl_files()
