@@ -1,6 +1,6 @@
 
 
-<div style="text-align: center;">
+<div align="center">
     <h1>Spectral Mineral Analyzer</h1>
     <div style="display: inline-block;">
         <img src="https://i.ibb.co/ssmGtV9/logo-jpg.jpg" alt="SpectralMineralAnalyzer" width="300" height="300">
