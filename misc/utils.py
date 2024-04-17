@@ -34,9 +34,12 @@ class Utils:
         try:
                 
             if footprint and start_date and end_date and platform_name and cloud_cover_percentage and type:
-                footprint = footprint.replace(" ", "%20")
+                footprint = footprint.replace("POLYGON (", "POLYGON(")
+                start_date = start_date.strftime("%Y-%m-%d")
+                end_date = end_date.strftime("%Y-%m-%d")
                 if isinstance(type, str):
-                    params = f"?&$filter=(Collection/Name%20eq%20%27{platform_name}%27%20and%20(Attributes/OData.CSC.StringAttribute/any(att:att/Name%20eq%20%27instrumentShortName%27%20and%20att/OData.CSC.StringAttribute/Value%20eq%20%27MSI%27)%20and%20Attributes/OData.CSC.DoubleAttribute/any(att:att/Name%20eq%20%27cloudCover%27%20and%20att/OData.CSC.DoubleAttribute/Value%20le%20{cloud_cover_percentage})%20and%20(contains(Name,%27{type}%27)%20and%20OData.CSC.Intersects(area=geography%27SRID=4326;{footprint}%27)))%20and%20Online%20eq%20true)%20and%20ContentDate/Start%20ge%20{start_date}T00:00:00.000Z%20and%20ContentDate/Start%20lt%20{end_date}T23:59:59.999Z&$orderby=ContentDate/Start%20desc&$expand=Attributes&$count=True&$top=50&$expand=Assets&$skip=0"
+                    params = f"?$filter=Collection/Name eq '{platform_name}' and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'S2MSI2A') and Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value le {cloud_cover_percentage}) and ContentDate/Start gt {start_date}T00:00:00.000Z and ContentDate/Start lt {end_date}T23:59:59.999Z and OData.CSC.Intersects(area=geography'SRID=4326;{footprint}')&$top=10"
+                    #params = f"?&$filter=(Collection/Name%20eq%20%27{platform_name}%27%20and%20(Attributes/OData.CSC.StringAttribute/any(att:att/Name%20eq%20%27instrumentShortName%27%20and%20att/OData.CSC.StringAttribute/Value%20eq%20%27MSI%27)%20and%20Attributes/OData.CSC.DoubleAttribute/any(att:att/Name%20eq%20%27cloudCover%27%20and%20att/OData.CSC.DoubleAttribute/Value%20le%20{cloud_cover_percentage})%20and%20(contains(Name,%27{type}%27)%20and%20OData.CSC.Intersects(area=geography%27SRID=4326;{footprint}%27)))%20and%20Online%20eq%20true)%20and%20ContentDate/Start%20ge%20{start_date}T00:00:00.000Z%20and%20ContentDate/Start%20lt%20{end_date}T23:59:59.999Z&$orderby=ContentDate/Start%20desc&$expand=Attributes&$count=True&$top=50&$expand=Assets&$skip=0"
                     logger.success("Query created successfully")
                     return params
                 elif isinstance(type, list):
